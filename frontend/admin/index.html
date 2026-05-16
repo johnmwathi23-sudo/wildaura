@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Wild Aura</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="admin">
+  <div class="toast-container" style="position:fixed;top:1rem;right:1rem;z-index:9999"></div>
+
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">WILD AURA <small>Admin Dashboard</small></div>
+      <nav class="admin-nav">
+        <a href="#" class="active" data-tab="tabDashboard"><span class="admin-nav-icon">📊</span> <span>Dashboard</span></a>
+        <a href="#" data-tab="tabProducts"><span class="admin-nav-icon">🧴</span> <span>Products</span></a>
+        <a href="#" data-tab="tabOrders"><span class="admin-nav-icon">📦</span> <span>Orders</span></a>
+        <a href="#" data-tab="tabCoupons"><span class="admin-nav-icon">🏷️</span> <span>Coupons</span></a>
+      </nav>
+      <div class="admin-nav-bottom">
+        <a href="/" class="admin-nav-back"><span class="admin-nav-icon">←</span> <span>Back to Site</span></a>
+        <a href="#" id="adminLogout"><span class="admin-nav-icon">🚪</span> <span>Logout</span></a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>Dashboard</h1>
+        <div class="admin-user">
+          <span style="font-size:0.85rem;color:var(--text-muted)"></span>
+          <div class="admin-avatar"></div>
+        </div>
+      </div>
+
+      <!-- Dashboard Panel -->
+      <div class="admin-panel active" id="tabDashboard">
+        <div class="admin-stats" id="adminStats">
+          <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value" id="statRevenue">—</div></div>
+          <div class="stat-card"><div class="stat-label">Orders</div><div class="stat-value" id="statOrders">—</div></div>
+          <div class="stat-card"><div class="stat-label">Avg. Order Value</div><div class="stat-value" id="statAvgOrder">—</div></div>
+          <div class="stat-card"><div class="stat-label">Products</div><div class="stat-value" id="statProducts">—</div></div>
+        </div>
+
+        <!-- Recent Orders -->
+        <h3 style="margin-bottom:1rem;font-size:1.1rem">Recent Orders</h3>
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="ordersTable">
+            <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Method</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Products Panel -->
+      <div class="admin-panel" id="tabProducts">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-panel="productList">All Products</button>
+          <button class="admin-tab" data-panel="productForm">Add / Edit Product</button>
+        </div>
+
+        <div class="admin-panel active" id="productList">
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="productsTable">
+              <thead><tr><th>Image</th><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th>Rating</th><th>Actions</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-panel" id="productForm">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+            <h3 id="productFormTitle" style="font-size:1.2rem">Add New Product</h3>
+            <button class="btn btn-sm btn-outline" onclick="document.getElementById('productForm').reset();document.getElementById('productForm').dataset.editId='';document.getElementById('productFormTitle').textContent='Add New Product'">Reset</button>
+          </div>
+          <form class="admin-form" id="productForm">
+            <div class="form-row">
+              <div class="form-group"><label>Product Name</label><input type="text" name="name" required></div>
+              <div class="form-group"><label>Slug</label><input type="text" name="slug" placeholder="Auto-generated"></div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea name="description" required rows="4"></textarea></div>
+            <div class="form-group"><label>Short Description</label><input type="text" name="shortDescription" required></div>
+            <div class="form-row">
+              <div class="form-group"><label>Price (KES)</label><input type="number" name="price" required></div>
+              <div class="form-group"><label>Compare Price (KES)</label><input type="number" name="comparePrice" value="0"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Stock</label><input type="number" name="stock" required></div>
+              <div class="form-group"><label>Category</label>
+                <select name="category" required>
+                  <option value="face-oils">Face Oils</option>
+                  <option value="serums">Serums</option>
+                  <option value="body">Body</option>
+                  <option value="sets">Sets</option>
+                  <option value="gifts">Gifts</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group"><label>Size</label><input type="text" name="size" placeholder="e.g. 30ml"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Image URL 1</label><input type="url" name="image1" placeholder="https://..."></div>
+              <div class="form-group"><label>Image URL 2</label><input type="url" name="image2" placeholder="https://..."></div>
+            </div>
+            <div style="margin-top:1.5rem">
+              <button type="submit" class="btn btn-primary">Save Product</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Orders Panel -->
+      <div class="admin-panel" id="tabOrders">
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="ordersTableFull">
+            <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Status</th><th>Method</th><th>Date</th><th>Action</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Coupons Panel -->
+      <div class="admin-panel" id="tabCoupons">
+        <div class="admin-tabs">
+          <button class="admin-tab active" data-panel="couponList">All Coupons</button>
+          <button class="admin-tab" data-panel="couponForm">Create Coupon</button>
+        </div>
+
+        <div class="admin-panel active" id="couponList">
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="couponsTable">
+              <thead><tr><th>Code</th><th>Value</th><th>Min Order</th><th>Usage</th><th>Status</th><th>Expires</th><th>Action</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="admin-panel" id="couponForm">
+          <form class="admin-form" id="couponForm">
+            <div class="form-row">
+              <div class="form-group"><label>Coupon Code</label><input type="text" name="code" required placeholder="e.g. SUMMER20" style="text-transform:uppercase"></div>
+              <div class="form-group"><label>Type</label>
+                <select name="type" required>
+                  <option value="percentage">Percentage (%)</option>
+                  <option value="fixed">Fixed (KES)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Value</label><input type="number" name="value" required placeholder="20 or 500"></div>
+              <div class="form-group"><label>Min Order Amount (KES)</label><input type="number" name="minOrderAmount" value="0"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Max Discount (KES, 0 = unlimited)</label><input type="number" name="maxDiscount" value="0"></div>
+              <div class="form-group"><label>Usage Limit (0 = unlimited)</label><input type="number" name="usageLimit" value="0"></div>
+            </div>
+            <div class="form-group"><label>Expires At</label><input type="date" name="expiresAt" required></div>
+            <div style="margin-top:1.5rem">
+              <button type="submit" class="btn btn-primary">Create Coupon</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
