@@ -6,7 +6,9 @@
   <title>Admin — Wild Aura</title>
   <link rel="stylesheet" href="css/admin.css">
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
   <script src="../js/config.js"></script>
+  <script src="../js/images.js"></script>
 </head>
 <body data-page="admin">
   <div class="toast-container" style="position:fixed;top:1rem;right:1rem;z-index:9999"></div>
@@ -20,6 +22,7 @@
         <a href="#" data-tab="tabProducts"><span class="admin-nav-icon">🧴</span> <span>Products</span></a>
         <a href="#" data-tab="tabOrders"><span class="admin-nav-icon">📦</span> <span>Orders</span></a>
         <a href="#" data-tab="tabCoupons"><span class="admin-nav-icon">🏷️</span> <span>Coupons</span></a>
+        <a href="#" data-tab="tabImages"><span class="admin-nav-icon">🖼️</span> <span>Site Images</span></a>
       </nav>
       <div class="admin-nav-bottom">
         <a href="/" class="admin-nav-back"><span class="admin-nav-icon">←</span> <span>Back to Site</span></a>
@@ -163,11 +166,36 @@
             </div>
           </form>
         </div>
+      <!-- Site Images Panel -->
+      <div class="admin-panel" id="tabImages">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <h3 style="font-size:1.2rem">Site Images</h3>
+          <button class="btn btn-sm btn-outline" onclick="seedSiteImages()">Reset Defaults</button>
+        </div>
+        <div class="image-manager" id="imageManager"></div>
+
+        <!-- Cropper Modal -->
+        <div class="cropper-overlay" id="cropperOverlay" style="display:none">
+          <div class="cropper-modal">
+            <div class="cropper-header">
+              <h3 id="cropperTitle">Crop Image</h3>
+              <span id="cropperRatio" style="font-size:0.85rem;color:var(--text-muted)"></span>
+            </div>
+            <div class="cropper-body">
+              <img id="cropperImage" src="" alt="Crop preview">
+            </div>
+            <div class="cropper-footer">
+              <button class="btn btn-outline" onclick="closeCropper()">Cancel</button>
+              <button class="btn btn-primary" onclick="saveCropped()">Save Image</button>
+            </div>
+          </div>
+        </div>
       </div>
 
     </main>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>

@@ -20,12 +20,23 @@ app.use('/api/orders', require('./routes/orderRoutes'));
 app.use('/api/coupons', require('./routes/couponRoutes'));
 app.use('/api/contact', require('./routes/contactRoutes'));
 app.use('/api/wishlist', require('./routes/wishlistRoutes'));
+app.use('/api/images', require('./routes/imageRoutes'));
+
+const { seedDefaults } = require('./controllers/imageController');
+seedDefaults();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Wild Aura API is running' });
 });
+
+const fs = require('fs');
+const siteUploadDir = path.join(__dirname, 'uploads', 'site');
+if (!fs.existsSync(siteUploadDir)) {
+  fs.mkdirSync(siteUploadDir, { recursive: true });
+  console.log(`Created uploads/site directory`);
+}
 
 app.use(errorHandler);
 

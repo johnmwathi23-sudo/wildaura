@@ -24,6 +24,7 @@ function initAdminApp() {
   loadCoupons();
   initProductForm();
   initCouponForm();
+  initImageManager();
 }
 
 function initTabs() {
@@ -246,3 +247,161 @@ function initCouponForm() {
     } catch (e) { showToast(e.message, 'error'); }
   });
 }
+
+// ===== SITE IMAGES =====
+let cropper = null;
+let cropperKey = null;
+
+function initImageManager() {
+  document.querySelector('[data-tab="tabImages"]')?.addEventListener('click', loadSiteImages);
+}
+
+async function loadSiteImages() {
+  const container = document.getElementById('imageManager');
+  if (!container) return;
+  container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text-muted)"><div class="spinner" style="margin:0 auto 1rem"></div>Loading images...</div>';
+  try {
+    const images = await api('/images');
+    renderImageCards(images);
+  } catch (e) {
+    container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--red)">Failed to load images. Make sure the server is running.</div>';
+  }
+}
+
+function renderImageCards(images) {
+  const container = document.getElementById('imageManager');
+  if (!container) return;
+  container.innerHTML = images.map(img => {
+    const src = img.url || img.defaultUrl;
+    const isCustom = !!img.url;
+    const [w, h] = img.aspectRatio.split(':').map(Number);
+    const aspectPct = (h / w * 100).toFixed(2);
+    return `
+      <div class="image-card" data-key="${img.key}">
+        <div class="image-card-header">
+          <div>
+            <h4>${img.label}</h4>
+            <span>${img.section} · ${img.aspectRatio}</span>
+          </div>
+          <span class="badge ${isCustom ? 'badge-custom' : 'badge-default'}">${isCustom ? 'Custom' : 'Default'}</span>
+        </div>
+        <div class="image-card-preview" style="padding-bottom:${aspectPct}%;position:relative;background:var(--cream)">
+          <img src="${src}" alt="${img.alt}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:0.5rem" onerror="this.parentElement.innerHTML='<span style=color:var(--text-light);font-size:0.8rem>No image</span>'">
+        </div>
+        <div class="image-card-info">
+          <span class="dimension">${img.width}×${img.height}px</span>
+          <span style="font-size:0.65rem;color:var(--text-light)">${new Date(img.updatedAt).toLocaleDateString()}</span>
+        </div>
+        <div class="image-card-actions">
+          <button class="btn btn-primary btn-sm" onclick="openCropper('${img.key}')">Upload & Crop</button>
+          ${isCustom ? `<button class="btn btn-outline btn-sm" onclick="resetImage('${img.key}')">Reset</button>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openCropper(key) {
+  cropperKey = key;
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/jpeg,image/png,image/webp';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('File too large. Max 5MB.', 'error');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = document.getElementById('cropperImage');
+      img.src = ev.target.result;
+      document.getElementById('cropperOverlay').style.display = 'flex';
+      const images = window._siteImages || [];
+      const imgData = images.find(i => i.key === key);
+      if (imgData) {
+        document.getElementById('cropperTitle').textContent = `Crop: ${imgData.label}`;
+        document.getElementById('cropperRatio').textContent = `Aspect ratio: ${imgData.aspectRatio}`;
+      }
+      setTimeout(() => {
+        if (cropper) cropper.destroy();
+        const [w, h] = (imgData?.aspectRatio || '1:1').split(':').map(Number);
+        cropper = new Cropper(img, {
+          aspectRatio: w / h,
+          viewMode: 1,
+          dragMode: 'move',
+          autoCropArea: 0.9,
+          cropBoxMovable: true,
+          cropBoxResizable: false,
+          background: false,
+          guides: true,
+          center: true,
+          highlight: false,
+          toggleDragModeOnDblclick: false,
+          minContainerWidth: 600,
+          minContainerHeight: 400
+        });
+      }, 100);
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
+}
+
+function closeCropper() {
+  document.getElementById('cropperOverlay').style.display = 'none';
+  if (cropper) { cropper.destroy(); cropper = null; }
+  cropperKey = null;
+}
+
+async function saveCropped() {
+  if (!cropper || !cropperKey) return;
+  const btn = document.querySelector('.cropper-footer .btn-primary');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  const overlay = document.getElementById('cropperOverlay');
+  overlay.querySelector('.cropper-body').innerHTML = '<div class="upload-progress"><div class="spinner"></div><span>Processing image...</span></div>';
+  try {
+    const canvas = cropper.getCroppedCanvas({ maxWidth: 1200, maxHeight: 1200, imageSmoothingQuality: 'high' });
+    const dataUrl = canvas.toDataURL('image/webp', 0.85);
+    const result = await fetch(`${API_URL}/images/${cropperKey}/upload-cropped`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${state.token}` },
+      body: JSON.stringify({ image: dataUrl })
+    });
+    const data = await result.json();
+    if (!result.ok) throw new Error(data.message || 'Upload failed');
+    showToast(`${data.image.label} updated successfully!`, 'success');
+    closeCropper();
+    loadSiteImages();
+  } catch (e) {
+    showToast(e.message, 'error');
+    closeCropper();
+  }
+  btn.disabled = false;
+  btn.textContent = origText;
+}
+
+window.resetImage = async (key) => {
+  if (!confirm('Reset this image to the default?')) return;
+  try {
+    await api(`/images/${key}/reset`, { method: 'DELETE' });
+    showToast('Image reset to default', 'info');
+    loadSiteImages();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+};
+
+window.seedSiteImages = async () => {
+  if (!confirm('Reset ALL site images to defaults? This cannot be undone.')) return;
+  try {
+    await api('/images/seed');
+    showToast('All images reset to defaults', 'info');
+    loadSiteImages();
+  } catch (e) {
+    showToast(e.message, 'error');
+  }
+};
