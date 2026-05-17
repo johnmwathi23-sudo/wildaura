@@ -18,7 +18,10 @@ const orderSchema = new mongoose.Schema({
     zip: { type: String, required: true },
     country: { type: String, required: true }
   },
-  paymentMethod: { type: String, required: true, enum: ['stripe', 'mpesa'] },
+  paymentMethod: { type: String, required: true, enum: ['mpesa', 'stripe'] },
+  mpesaPhone: { type: String, default: '' },
+  mpesaCheckoutRequestId: { type: String, default: '' },
+  mpesaMerchantRequestId: { type: String, default: '' },
   paymentResult: {
     id: String,
     status: String,

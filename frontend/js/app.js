@@ -634,15 +634,40 @@ async function placeOrder(e) {
       zip: data.get('zip'),
       country: data.get('country')
     },
-    paymentMethod: data.get('paymentMethod') || 'stripe'
+    paymentMethod: data.get('paymentMethod') || 'mpesa',
+    mpesaPhone: data.get('mpesaPhone') || ''
   };
   try {
+    const btn = form.querySelector('button[type="submit"]');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
     const order = await api('/orders', { method: 'POST', body: JSON.stringify(orderData) });
     state.cart = [];
     saveCart();
-    showToast('Order placed successfully!', 'success');
-    setTimeout(() => { window.location.href = `/pages/dashboard.html?order=${order._id}`; }, 1000);
-  } catch (e) { /* handled */ }
+    if (orderData.paymentMethod === 'mpesa' && order.mpesaResponseCode === '0') {
+      showToast('STK push sent! Check your phone to complete payment.', 'success');
+      const poll = setInterval(async () => {
+        try {
+          const status = await api(`/orders/${order._id}/mpesa/status`);
+          if (status.status === 'paid') {
+            clearInterval(poll);
+            showToast('Payment received! Order confirmed.', 'success');
+            setTimeout(() => { window.location.href = `/pages/dashboard.html?order=${order._id}`; }, 1500);
+          }
+        } catch (e) { /* handled */ }
+      }, 3000);
+      setTimeout(() => clearInterval(poll), 120000);
+    } else {
+      showToast('Order placed successfully!', 'success');
+      setTimeout(() => { window.location.href = `/pages/dashboard.html?order=${order._id}`; }, 1000);
+    }
+    btn.disabled = false;
+    btn.textContent = originalText;
+  } catch (e) {
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) { btn.disabled = false; btn.textContent = 'Place Order'; }
+  }
 }
 
 // ===== AUTH =====

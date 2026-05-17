@@ -15,7 +15,15 @@ services:
         sync: false
       - key: JWT_SECRET
         sync: false
-      - key: STRIPE_SECRET_KEY
+      - key: M_PESA_CONSUMER_KEY
+        sync: false
+      - key: M_PESA_CONSUMER_SECRET
+        sync: false
+      - key: M_PESA_PASSKEY
+        sync: false
+      - key: M_PESA_SHORTCODE
+        value: "174379"
+      - key: M_PESA_CALLBACK_URL
         sync: false
       - key: FRONTEND_URL
         value: https://wild-aura.vercel.app

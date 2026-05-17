@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout — Wild Aura</title>
-  <meta name="description" content="Complete your Wild Aura order securely. We accept Stripe and M-Pesa payments.">
+  <meta name="description" content="Complete your Wild Aura order securely. Pay with M-Pesa.">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
 </head>
@@ -91,15 +91,17 @@
           <h2 style="margin-top:2rem">Payment Method</h2>
           <div style="display:flex;flex-direction:column;gap:1rem;margin-top:1rem">
             <label style="display:flex;align-items:center;gap:0.8rem;padding:1rem;border:2px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition)">
-              <input type="radio" name="paymentMethod" value="stripe" checked style="width:auto">
-              <span style="font-weight:600">💳 Credit / Debit Card</span>
-              <span style="font-size:0.8rem;color:var(--text-muted);margin-left:auto">Pay with Stripe</span>
-            </label>
-            <label style="display:flex;align-items:center;gap:0.8rem;padding:1rem;border:2px solid rgba(0,0,0,0.1);border-radius:var(--radius-sm);cursor:pointer;transition:var(--transition)">
-              <input type="radio" name="paymentMethod" value="mpesa" style="width:auto">
+              <input type="radio" name="paymentMethod" value="mpesa" checked style="width:auto">
               <span style="font-weight:600">📱 M-Pesa</span>
               <span style="font-size:0.8rem;color:var(--text-muted);margin-left:auto">Pay with Mobile Money</span>
             </label>
+          </div>
+          <div id="mpesaPhoneGroup" style="margin-top:1rem;padding:1rem;background:var(--cream);border-radius:var(--radius-sm)">
+            <div class="form-group">
+              <label for="mpesaPhone">M-Pesa Phone Number</label>
+              <input type="tel" id="mpesaPhone" name="mpesaPhone" placeholder="e.g. 0712345678" required>
+              <span style="font-size:0.75rem;color:var(--text-muted)">You will receive an STK push prompt on this number</span>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary" style="width:100%;margin-top:2rem;padding:1.2rem">
