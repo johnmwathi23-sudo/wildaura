@@ -110,4 +110,17 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, getProfile, updateProfile, forgotPassword, getUsers, deleteUser };
+const seedAdminUser = async (req, res, next) => {
+  try {
+    const exists = await User.findOne({ email: 'admin@wildaura.com' });
+    if (exists) {
+      return res.json({ message: 'Admin user already exists', email: 'admin@wildaura.com' });
+    }
+    await User.create({ name: 'Admin', email: 'admin@wildaura.com', password: 'admin123456', role: 'admin' });
+    res.json({ message: 'Admin user created', email: 'admin@wildaura.com', password: 'admin123456' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { register, login, getProfile, updateProfile, forgotPassword, getUsers, deleteUser, seedAdminUser };

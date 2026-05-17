@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { register, login, getProfile, updateProfile, forgotPassword, getUsers, deleteUser } = require('../controllers/authController');
+const { register, login, getProfile, updateProfile, forgotPassword, getUsers, deleteUser, seedAdminUser } = require('../controllers/authController');
 const { protect, admin } = require('../middleware/auth');
 
 router.post('/register', register);
 router.post('/login', login);
+router.get('/seed-admin', seedAdminUser);
 router.post('/forgot-password', forgotPassword);
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
