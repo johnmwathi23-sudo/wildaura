@@ -39,7 +39,7 @@ app.use(errorHandler);
 
 connectDB().then(() => {
   const { seedDefaults } = require('./controllers/imageController');
-  seedDefaults();
+  seedDefaults().catch(() => {});
 }).catch(() => {});
 
 const PORT = process.env.PORT || 5000;
