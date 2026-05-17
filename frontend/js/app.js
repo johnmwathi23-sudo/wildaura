@@ -225,7 +225,7 @@ function createProductCardHTML(p) {
   const img = p.images?.[0] || 'https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400';
   const stars = Math.round(p.ratings || 0);
   const emptyStars = 5 - stars;
-  const badge = p.isNew ? '<span class="product-card-badge badge-new">New</span>'
+  const badge = p.isNewArrival ? '<span class="product-card-badge badge-new">New</span>'
     : p.comparePrice > p.price ? '<span class="product-card-badge badge-sale">Sale</span>'
     : p.isBestSeller ? '<span class="product-card-badge badge-bestseller">Best Seller</span>' : '';
   const compare = p.comparePrice > p.price ? `<span class="compare-price">KES ${p.comparePrice.toLocaleString()}</span>` : '';

@@ -23,7 +23,7 @@ const products = [
     stock: 150,
     isFeatured: true,
     isBestSeller: true,
-    isNew: false,
+    isNewArrival: false,
     ratings: 4.8,
     numReviews: 127,
     usageFor: 'All skin types, especially acne-prone'
@@ -44,7 +44,7 @@ const products = [
     stock: 85,
     isFeatured: true,
     isBestSeller: true,
-    isNew: false,
+    isNewArrival: false,
     ratings: 4.7,
     numReviews: 89,
     usageFor: 'All skin types'
@@ -65,7 +65,7 @@ const products = [
     stock: 60,
     isFeatured: true,
     isBestSeller: false,
-    isNew: true,
+    isNewArrival: true,
     ratings: 4.9,
     numReviews: 43,
     usageFor: 'All skin types, especially hyperpigmented'
@@ -86,7 +86,7 @@ const products = [
     stock: 40,
     isFeatured: true,
     isBestSeller: false,
-    isNew: true,
+    isNewArrival: true,
     ratings: 5.0,
     numReviews: 28,
     usageFor: 'All skin types'
@@ -107,7 +107,7 @@ const products = [
     stock: 200,
     isFeatured: false,
     isBestSeller: false,
-    isNew: false,
+    isNewArrival: false,
     ratings: 4.6,
     numReviews: 64,
     usageFor: 'Oily, acne-prone skin'
@@ -128,7 +128,7 @@ const products = [
     stock: 25,
     isFeatured: false,
     isBestSeller: false,
-    isNew: false,
+    isNewArrival: false,
     ratings: 4.9,
     numReviews: 17,
     usageFor: 'Gifting'
@@ -149,7 +149,7 @@ const products = [
     stock: 90,
     isFeatured: false,
     isBestSeller: false,
-    isNew: true,
+    isNewArrival: true,
     ratings: 4.5,
     numReviews: 31,
     usageFor: 'All skin types'
@@ -170,7 +170,7 @@ const products = [
     stock: 110,
     isFeatured: false,
     isBestSeller: false,
-    isNew: true,
+    isNewArrival: true,
     ratings: 4.7,
     numReviews: 52,
     usageFor: 'All skin types, especially dry'
